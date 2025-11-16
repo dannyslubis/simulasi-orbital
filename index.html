@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulasi Subkulit dengan Gambar Orbital</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* CSS untuk Styling Dasar */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #e6f0ff;
+            font-family: 'Lexend', sans-serif;
+            color: #1a237e;
+            position: relative;
+        }
+
+        .container {
+            display: flex;
+            gap: 50px;
+            align-items: center;
+        }
+
+        /* --- Orbital Visual Area (Kiri) --- */
+        .orbital-visual {
+            position: relative;
+            width: 400px; /* Ukuran visual diperbesar agar gambar terlihat jelas */
+            height: 400px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 2px solid #5c6bc0; 
+            border-radius: 10px;
+            background-color: white;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Styling untuk Gambar Orbital */
+        .orbital-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain; /* Memastikan gambar pas tanpa terpotong */
+            transition: opacity 0.3s ease-in-out;
+        }
+        
+        /* Placeholder saat gambar belum dimuat atau kosong */
+        .orbital-placeholder {
+            text-align: center;
+            color: #5c6bc0;
+            font-weight: 600;
+        }
+
+        /* --- Control Panel (Kanan) --- */
+        .control-panel {
+            background-color: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 200px;
+            text-align: center;
+        }
+
+        .control-panel h3 {
+            font-size: 1.2em;
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        /* Menggunakan (ℓ) untuk Bilangan Kuantum Azimut */
+        .control-panel h3 span {
+            font-style: italic;
+        }
+
+        .subkulit-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .subkulit-options input[type="radio"] {
+            display: none;
+        }
+
+        .subkulit-label {
+            display: block;
+            padding: 15px 0;
+            background-color: #1a237e;
+            color: white;
+            font-size: 2.5em; /* Ukuran huruf besar (s, p, d, f) */
+            font-weight: 700;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.2s;
+            text-transform: lowercase; /* Menjamin huruf kecil */
+        }
+
+        .subkulit-label:hover {
+            background-color: #3949ab;
+        }
+
+        .subkulit-options input[type="radio"]:checked + .subkulit-label {
+            background-color: #5c6bc0;
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Area footer/keterangan */
+        .footer {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            right: 10px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8em;
+            font-weight: 400;
+            color: #5c6bc0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="orbital-visual" id="orbitalVisual">
+        <img id="orbitalImage" class="orbital-image" src="" alt="Bentuk Orbital">
+        <div id="placeholderText" class="orbital-placeholder">Pilih subkulit di samping untuk melihat bentuk orbital.</div>
+    </div>
+
+    <div class="control-panel">
+        <h3>Subkulit (<span>ℓ</span>):</h3>
+        <div class="subkulit-options">
+            
+            <input type="radio" id="sub-s" name="subkulit" value="s" data-img-src="img/aos.png" checked>
+            <label for="sub-s" class="subkulit-label">s</label>
+            
+            <input type="radio" id="sub-p" name="subkulit" value="p" data-img-src="img/aop.png">
+            <label for="sub-p" class="subkulit-label">p</label>
+
+            <input type="radio" id="sub-d" name="subkulit" value="d" data-img-src="img/aod.png">
+            <label for="sub-d" class="subkulit-label">d</label>
+            
+            <input type="radio" id="sub-f" name="subkulit" value="f" data-img-src="img/aof.png">
+            <label for="sub-f" class="subkulit-label">f</label>
+        </div>
+    </div>
+
+</div>
+
+<div class="footer">
+    <span>Materi - Chemedu</span>
+    <span>Chemedu - 2025</span>
+</div>
+
+
+<script>
+    const subkulitRadios = document.querySelectorAll('input[name="subkulit"]');
+    const orbitalImage = document.getElementById('orbitalImage');
+    const placeholderText = document.getElementById('placeholderText');
+    
+    // Fungsi utama untuk mengubah gambar
+    function updateOrbitalDisplay(selectedRadio) {
+        const imgSrc = selectedRadio.getAttribute('data-img-src');
+        const subkulit = selectedRadio.value;
+        
+        // Sembunyikan placeholder, tampilkan gambar
+        placeholderText.style.display = 'none';
+        orbitalImage.style.display = 'block';
+
+        // Atur sumber gambar baru
+        orbitalImage.src = imgSrc;
+        orbitalImage.alt = "Bentuk Orbital " + subkulit.toUpperCase();
+        
+        // Handle case jika URL_GAMBAR belum diisi (untuk demonstrasi)
+        if (imgSrc.includes("URL_GAMBAR_ANDA_DI_SINI")) {
+            orbitalImage.style.display = 'none';
+            placeholderText.textContent = `Mohon ganti "URL_GAMBAR_${subkulit.toUpperCase()}_ANDA_DI_SINI" dengan alamat gambar yang sebenarnya.`;
+            placeholderText.style.display = 'block';
+        }
+    }
+
+    // Event Listener pada setiap tombol radio subkulit
+    subkulitRadios.forEach(radio => {
+        radio.addEventListener('change', (event) => {
+            updateOrbitalDisplay(event.target);
+        });
+    });
+
+    // Inisialisasi tampilan awal dengan tombol yang sudah ter-check (s)
+    document.getElementById('sub-s').checked = true;
+    updateOrbitalDisplay(document.getElementById('sub-s')); 
+</script>
+
+</body>
+</html>
